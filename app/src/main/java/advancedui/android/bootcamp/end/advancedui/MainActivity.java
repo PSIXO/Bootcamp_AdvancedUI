@@ -2,10 +2,14 @@ package advancedui.android.bootcamp.end.advancedui;
 
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
@@ -13,6 +17,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager pager;
     private MyStatePagerAdapter adapter;
 
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle toggle;
+    private ListView listView;
+
     private List<String> data = new ArrayList<>(
             Arrays.asList("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"));
 
@@ -38,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //data = data.subList(0, 3);
 
         toolbarTop = (Toolbar) findViewById(R.id.toolbar_top);
         setSupportActionBar(toolbarTop);
@@ -51,12 +65,86 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new MyStatePagerAdapter(getSupportFragmentManager(), data);
         pager.setAdapter(adapter);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (listView != null) {
+                    listView.getAdapter().getItem(position);
+                    listView.setItemChecked(position,true);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(pager);
 
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        if (data.size() > 3) {
+            listView = (ListView) findViewById(R.id.left_drawer);
+            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1, data));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    pager.setCurrentItem(i);
+                    drawerLayout.closeDrawers();
+                }
+            });
+
+
+            toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.placeholder_some_content, R.string.placeholder_some_content);
+
+            // Set the drawer toggle as the DrawerListener
+            drawerLayout.addDrawerListener(toggle);
+            drawerLayout.setScrimColor(Color.TRANSPARENT);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            tabLayout.setVisibility(View.GONE);
+        } else {
+            tabLayout.setupWithViewPager(pager);
+        }
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        if (toggle != null) {
+            toggle.syncState();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (toggle != null) {
+            toggle.onConfigurationChanged(newConfig);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (toggle != null && toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 for (String s : data) {
                     if (s.toLowerCase().startsWith(query.toLowerCase())) {
-                        text.setText(s);
+                        pager.setCurrentItem(data.indexOf(s));
                         return false;
                     }
                 }
