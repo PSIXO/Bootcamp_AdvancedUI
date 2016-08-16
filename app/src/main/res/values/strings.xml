@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Advanced UI</string>
+    <string name="placeholder_some_content">Hi! There will be some content here...</string>
 </resources>
