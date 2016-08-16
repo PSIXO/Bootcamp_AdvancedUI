@@ -13,7 +13,27 @@
         android:layout_alignParentTop="true"
         android:background="#e2b727"
         app:logo="@drawable/ic_logo"
-        app:title="@string/app_name" />
+        app:title="@string/app_name">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar_top">
+
+            <android.support.design.widget.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="1" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="2" />
+
+        </android.support.design.widget.TabLayout>
+    </android.support.v7.widget.Toolbar>
+
 
     <RelativeLayout
         android:id="@+id/content"
@@ -22,14 +42,7 @@
         android:layout_above="@+id/toolbar_bottom"
         android:layout_below="@id/toolbar_top"
         android:layout_centerInParent="true"
-        android:layout_margin="@dimen/activity_horizontal_margin">
-
-        <TextView
-            android:id="@+id/text_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder_some_content" />
-    </RelativeLayout>
+        android:layout_margin="@dimen/activity_horizontal_margin" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_bottom"
