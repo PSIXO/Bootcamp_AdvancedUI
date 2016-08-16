@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbarBottom;
 
     private ViewPager pager;
-    private MyPagerAdapter adapter;
+    private MyStatePagerAdapter adapter;
 
-    private ArrayList<String> data = new ArrayList<>(
+    private List<String> data = new ArrayList<>(
             Arrays.asList("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"));
 
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         toolbarBottom.inflateMenu(R.menu.bottom);
 
 
-        adapter = new MyPagerAdapter(getSupportFragmentManager());
+        adapter = new MyStatePagerAdapter(getSupportFragmentManager(), data);
         pager.setAdapter(adapter);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
