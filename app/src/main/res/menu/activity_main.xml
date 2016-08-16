@@ -9,12 +9,19 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_search"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
         android:id="@+id/menu_item_share"
         android:actionProviderClass="android.widget.ShareActionProvider"
         android:icon="@android:drawable/btn_star_big_off"
         android:title="Share"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/delete"
