@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item android:title="Main">
+        <menu>
+            <group
+                android:id="@+id/group_main"
+                android:checkableBehavior="single">
+                <item
+                    android:icon="@drawable/ic_one"
+                    android:numericShortcut="1"
+                    android:title="One" />
+                <item
+                    android:icon="@drawable/ic_two"
+                    android:numericShortcut="2"
+                    android:title="Two" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="Other">
+        <menu>
+            <group
+                android:id="@+id/group_settings"
+                android:checkableBehavior="none">
+                <item
+                    android:icon="@android:drawable/ic_menu_preferences"
+                    android:title="Settings" />
+                <item
+                    android:id="@+id/nav_switch"
+                    android:icon="@android:drawable/ic_dialog_alert"
+                    android:title="Alerts"
+                    app:actionLayout="@layout/action_view_switch" />
+            </group>
+        </menu>
+    </item>
+
+</menu>
+
+

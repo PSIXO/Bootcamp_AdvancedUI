@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -17,10 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
-    private ListView listView;
+    private NavigationView navigationView;
 
     private List<String> data = new ArrayList<>(
             Arrays.asList("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"));
@@ -62,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         toolbarBottom = (Toolbar) findViewById(R.id.toolbar_bottom);
         toolbarBottom.inflateMenu(R.menu.bottom);
 
+        navigationView = (NavigationView) findViewById(R.id.navigation);
+
 
         adapter = new MyStatePagerAdapter(getSupportFragmentManager(), data);
         pager.setAdapter(adapter);
@@ -73,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (listView != null) {
-                    listView.getAdapter().getItem(position);
-                    listView.setItemChecked(position, true);
-                }
             }
 
             @Override
@@ -91,16 +88,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (data.size() > 3) {
-            listView = (ListView) findViewById(R.id.left_drawer);
-            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1, data));
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    pager.setCurrentItem(i);
-                    drawerLayout.closeDrawers();
-                }
-            });
 
 
             toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.placeholder_some_content, R.string.placeholder_some_content);
@@ -115,6 +102,37 @@ public class MainActivity extends AppCompatActivity {
         } else {
             tabLayout.setupWithViewPager(pager);
         }
+
+        //navigationView.inflateHeaderView(R.layout.navigation_header);
+
+
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        if (menuItem.getNumericShortcut() != 0) {
+                            pager.setCurrentItem(Integer.parseInt(String.valueOf(menuItem.getNumericShortcut())) - 1);
+                            Menu menu = navigationView.getMenu();
+                            for (int i = 0; i < menu.size(); i++) {
+                                menu.getItem(i).setChecked(false);
+                            }
+                            drawerLayout.closeDrawers();
+                        }
+                        else{
+                            Toast.makeText(MainActivity.this, "Will open settings", Toast.LENGTH_SHORT).show();
+                        }
+                        return true;
+                    }
+                });
+
+        Menu navigationMenu = navigationView.getMenu();
+
+        SubMenu navigationSubmenu = navigationMenu.getItem(0).getSubMenu();
+        for (String s : data.subList(2, data.size())) {
+            navigationSubmenu.add(s).setNumericShortcut(Character.forDigit(data.indexOf(s) + 1, 10)).setCheckable(true);
+        }
+
+
     }
 
     @Override
