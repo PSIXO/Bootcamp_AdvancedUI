@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 if (listView != null) {
                     listView.getAdapter().getItem(position);
-                    listView.setItemChecked(position,true);
+                    listView.setItemChecked(position, true);
                 }
             }
 
@@ -140,8 +140,10 @@ public class MainActivity extends AppCompatActivity {
         // true, then it has handled the app icon touch event
         if (toggle != null && toggle.onOptionsItemSelected(item)) {
             return true;
+        } else {
+            Toast.makeText(MainActivity.this, "Action " + item.getTitle(), Toast.LENGTH_SHORT).show();
         }
-        // Handle your other action bar items...
+
 
         return super.onOptionsItemSelected(item);
     }

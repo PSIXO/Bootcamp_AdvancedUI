@@ -21,7 +21,6 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            currentFragment = new FragmentWillBeContent();
             return new FragmentWillBeContent();
         } else {
             return new FragmentThereWasContentContent();
