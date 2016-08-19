@@ -14,14 +14,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
+    private ViewGroup root;
+    private ViewFlipper viewFlipper;
 
     private List<String> data = new ArrayList<>(
             Arrays.asList("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"));
@@ -103,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             tabLayout.setupWithViewPager(pager);
         }
 
+        //Or add navigation drawer header from code
         //navigationView.inflateHeaderView(R.layout.navigation_header);
 
 
@@ -117,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
                                 menu.getItem(i).setChecked(false);
                             }
                             drawerLayout.closeDrawers();
-                        }
-                        else{
+                        } else {
                             Toast.makeText(MainActivity.this, "Will open settings", Toast.LENGTH_SHORT).show();
                         }
                         return true;
@@ -132,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
             navigationSubmenu.add(s).setNumericShortcut(Character.forDigit(data.indexOf(s) + 1, 10)).setCheckable(true);
         }
 
+        root = (ViewGroup) findViewById(android.R.id.content);
+        getLayoutInflater().inflate(R.layout.watermark, root, true);
+
+        viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
 
     }
 
@@ -173,9 +182,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void onActionAlert(MenuItem item) {
-        Toast.makeText(MainActivity.this, "On Alert", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -211,5 +217,23 @@ public class MainActivity extends AppCompatActivity {
         mShareActionProvider.setShareIntent(intentShare);
 
         return true;
+    }
+
+    public void onSwitch(View view) {
+        SwitchCompat switchCompat = (SwitchCompat) view;
+        if (switchCompat.isChecked()) {
+            getLayoutInflater().inflate(R.layout.watermark, root, true);
+        } else {
+            root.removeView(findViewById(R.id.watermark_text));
+            root.removeView(findViewById(R.id.watermark_image));
+        }
+    }
+
+    public void onActionNextToolbar(MenuItem item) {
+        viewFlipper.setDisplayedChild(1);
+    }
+
+    public void onPreviousToolbar(View view) {
+        viewFlipper.setDisplayedChild(2);
     }
 }
