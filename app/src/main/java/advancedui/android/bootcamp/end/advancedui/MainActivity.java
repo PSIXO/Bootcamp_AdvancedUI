@@ -1,9 +1,14 @@
 package advancedui.android.bootcamp.end.advancedui;
 
 
+import android.animation.AnimatorInflater;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -22,9 +27,14 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.eftimoff.viewpagertransformers.BackgroundToForegroundTransformer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +105,25 @@ public class MainActivity extends AppCompatActivity {
         if (data.size() > 3) {
 
 
-            toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.placeholder_some_content, R.string.placeholder_some_content);
+            toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.placeholder_some_content, R.string.placeholder_some_content) {
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    ImageView headerImage = (ImageView) findViewById(R.id.header_image);
+                    headerImage.setBackgroundResource(R.drawable.animated_image);
+                    AnimationDrawable headerAnimation = (AnimationDrawable) headerImage.getBackground();
+                    headerAnimation.start();
+                    super.onDrawerOpened(drawerView);
+                }
+
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    ImageView headerImage = (ImageView) findViewById(R.id.header_image);
+                    headerImage.setBackgroundResource(R.drawable.animated_image);
+                    AnimationDrawable headerAnimation = (AnimationDrawable) headerImage.getBackground();
+                    headerAnimation.stop();
+                    super.onDrawerClosed(drawerView);
+                }
+            };
 
             // Set the drawer toggle as the DrawerListener
             drawerLayout.addDrawerListener(toggle);
@@ -142,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
 
+        pager.setPageTransformer(true, new BackgroundToForegroundTransformer());
     }
 
     @Override
@@ -167,6 +196,20 @@ public class MainActivity extends AppCompatActivity {
         // true, then it has handled the app icon touch event
         if (toggle != null && toggle.onOptionsItemSelected(item)) {
             return true;
+        } else if (item.getItemId() == R.id.create) {
+            View v = findViewById(R.id.create);
+            if (v.getTag() == null || !((Boolean) v.getTag())) {
+                v.setTag(true);
+                v.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.rotate));
+            } else {
+                v.setTag(false);
+                v.clearAnimation();
+            }
+
+        } else if (item.getItemId() == R.id.delete) {
+            ObjectAnimator objAnim = (ObjectAnimator) AnimatorInflater.loadAnimator(MainActivity.this, R.animator.color_circle);
+            objAnim.setTarget(adapter.getCurrentFragment().findTextContent());
+            objAnim.start();
         } else {
             Toast.makeText(MainActivity.this, "Action " + item.getTitle(), Toast.LENGTH_SHORT).show();
         }
@@ -235,5 +278,42 @@ public class MainActivity extends AppCompatActivity {
 
     public void onPreviousToolbar(View view) {
         viewFlipper.setDisplayedChild(2);
+    }
+
+    public void onClickText(View view) {
+        final TextView text = (TextView) view;
+        //Toast.makeText(MainActivity.this, "Hi I am " + text.getText().toString(), Toast.LENGTH_SHORT).show();
+        final ViewPropertyAnimator animator = text.animate();
+        animator.setDuration(250).scaleXBy(1.1f).scaleYBy(1.1f)
+                .withStartAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        //text.setTranslationY(-50);
+                        animator.translationYBy(-50);
+                    }
+                })
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (text.getScaleX() > 4) {
+                            animator.scaleX(1f).scaleY(1f);
+                        }
+                        animator.translationYBy(50);
+                    }
+                }).start();
+
+        int colorFrom = getResources().getColor(R.color.colorAccent);
+        int colorTo = getResources().getColor(R.color.black);
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(600); // milliseconds
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                text.setTextColor((int) animator.getAnimatedValue());
+            }
+
+        });
+        colorAnimation.start();
     }
 }

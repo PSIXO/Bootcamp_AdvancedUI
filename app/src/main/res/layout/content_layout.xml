@@ -27,7 +27,9 @@
         android:id="@+id/view_flipper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:inAnimation="@anim/slide_up"
+        android:outAnimation="@anim/slide_down">
 
         <include layout="@layout/toolbar_bottom_layout" />
 
