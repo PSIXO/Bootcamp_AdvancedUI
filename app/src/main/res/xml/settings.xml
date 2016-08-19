@@ -1,0 +1,15 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Settings">
+        <CheckBoxPreference
+            android:key="pref_key_animations"
+            android:defaultValue="true"
+            android:title="Use animations" />
+        <Preference
+            android:title="More info">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.example.com" />
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

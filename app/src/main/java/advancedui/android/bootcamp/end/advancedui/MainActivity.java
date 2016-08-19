@@ -6,10 +6,12 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
@@ -21,6 +23,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,6 +45,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG = "[MainActivity]";
+
     private Toolbar toolbarTop;
     private TabLayout tabLayout;
     private TextView text;
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private ViewGroup root;
     private ViewFlipper viewFlipper;
+    private boolean animations;
+
 
     private List<String> data = new ArrayList<>(
             Arrays.asList("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"));
@@ -180,6 +187,15 @@ public class MainActivity extends AppCompatActivity {
         if (toggle != null) {
             toggle.syncState();
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        animations = sharedPref.getBoolean("pref_key_animations", true);
+        Log.d(TAG, "Setting animation " + animations);
     }
 
     @Override
@@ -315,5 +331,9 @@ public class MainActivity extends AppCompatActivity {
 
         });
         colorAnimation.start();
+    }
+
+    public void onSettingsClick(MenuItem item) {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 }
